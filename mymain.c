@@ -118,7 +118,7 @@ void __init my_start_kernel(void)
 	task_idle.thread.sp = &task_idle.stack[MAX_STACK_SIZE];
 	task_idle.next = &task_idle;
 
-	task_idle.state = TASK_RUNNING;
+	task_idle.state = TASK_RUN;
 	my_current = &task_idle;
 
 	if(!create_task(1, task1))
@@ -171,7 +171,7 @@ void my_schdule()
 
 	old_task->state = TASK_WAIT;		//更新current变量
 	my_current = next_task;
-	my_current->state = TASK_RUNNING;
+	my_current->state = TASK_RUN;
 	__asm__ __volatile__(
 		"movl $1f, %0\n\t"		//将标号1的位置保存到旧任务的ip中。当此任务再次被调度时便从标号1处开始执行
 		"movl %%esp, %1\n\t"
