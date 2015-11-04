@@ -38,10 +38,21 @@
 #define CREATE_TRACE_POINTS
 #include <trace/events/timer.h>
 
+#include "myPCB.h"
+
+extern void my_schdule();
+static uint32_t cnt = 0;
+uint32_t need_sched = 0;
 /*
  * Called by timer interrupt.
  */
 void my_timer_handler(void)
 {
-	printk(KERN_NOTICE "\n>>>>>>>>>>>>>>>>>my_timer_handler here<<<<<<<<<<<<<<<<<<\n\n");
+	cnt++;
+	if(cnt%TIMESLICE == 0 && need_sched!=1)
+	{
+		printk(KERN_NOTICE "\n>>>>>>>>>>>>>>>>>my_timer_handler here<<<<<<<<<<<<<<<<<<\n\n");
+		need_sched = 1;
+		cnt = 0;
+	}
 }

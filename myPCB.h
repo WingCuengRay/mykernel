@@ -2,6 +2,7 @@
 #define MYPCB_H
 
 #define MAX_STACK_SIZE 1024
+#define TIMESLICE	1000		//1 million
 enum State{TASK_STOP = -1, TASK_RUN = 0, TASK_WAIT = 1};
 
 typedef unsigned int uint32_t;

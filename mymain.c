@@ -88,24 +88,43 @@ struct tPCB task_idle;
 
 void idle(void);
 void my_schdule();
+extern int need_sched;
 
 
 void task1()
 {
-	uint32_t cnt;
+	uint32_t cnt = 0,i = 0;
 	while(1)
 	{
-		printk(KERN_NOTICE "This is Task 111111111111 !\n");
-		my_schdule();
+		if(cnt%1000000 == 0)
+		{
+			printk(KERN_NOTICE "This is Task 111111111111 ! %d\n", i++);
+			if(need_sched)
+			{
+				need_sched = 0;
+				my_schdule();
+			}
+			cnt = 0;
+		}
 	}
 }
 
 void task2()
 {
+	int i = 0,cnt = 0;;
 	while(1)
 	{
-		printk(KERN_NOTICE "This is Task 222222222222 !\n");
-		my_schdule();
+		cnt++;
+		if(cnt%1000000 == 0)
+		{
+			printk(KERN_NOTICE "This is Task 222222222222 %d!\n", i++);
+			if(need_sched)
+			{
+				need_sched = 0;
+				my_schdule();
+			}
+			cnt = 0;
+		}
 	}
 }
 
@@ -126,6 +145,7 @@ void __init my_start_kernel(void)
 	if(!create_task(2, task2))
 		printk(KERN_ALERT "Create task error");
 
+	my_current = &task_idle;
 	__asm__ __volatile__(
 		"movl %0, %%esp\n\t"
 		"push %0\n\t"		//这次压栈其实是为了保存栈底的指针。因为任务未运行时是空栈，所以栈顶与栈底指向同一个地址.
@@ -143,12 +163,18 @@ void __init my_start_kernel(void)
 void idle(void)
 {
 	uint32_t cnt = 0;
+	int i=0;
 	while(1)
 	{
 		if(cnt%1000000 == 0)
 		{
-			printk(KERN_NOTICE "This is the idle task!Count: %d\n", cnt);
-			my_schdule();
+			printk(KERN_NOTICE "This is idle Task!!!!!%d!\n", i++);
+			if(need_sched)
+			{
+				need_sched = 0;
+				my_schdule();
+			}
+			cnt = 0;
 		}
 		cnt++;
 	}
